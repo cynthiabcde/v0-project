@@ -48,8 +48,9 @@ export function AlertRuleList({
             <tr className="bg-[#fafafa]">
               <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">规则ID</th>
               <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">规则名称</th>
+              <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">开关</th>
               <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">触发状态</th>
-              <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">状态</th>
+              <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">规则状态</th>
               <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">店铺ID</th>
               <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">报警人员</th>
               <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">提示语</th>
@@ -62,7 +63,7 @@ export function AlertRuleList({
           <tbody>
             {rules.length === 0 ? (
               <tr>
-                <td colSpan={11} className="border border-[#e8e8e8] px-3 py-8 text-center text-[#999]">
+                <td colSpan={12} className="border border-[#e8e8e8] px-3 py-8 text-center text-[#999]">
                   暂无数据
                 </td>
               </tr>
@@ -71,6 +72,14 @@ export function AlertRuleList({
                 <tr key={rule.id} className="hover:bg-[#fafafa]">
                   <td className="border border-[#e8e8e8] px-3 py-2 text-[#333]">{rule.id}</td>
                   <td className="border border-[#e8e8e8] px-3 py-2 text-[#333]">{rule.name}</td>
+                  <td className="border border-[#e8e8e8] px-3 py-2">
+                    <Switch
+                      checked={rule.enabled}
+                      onCheckedChange={() => onToggle(rule.id)}
+                      className="scale-75"
+                      disabled={!rule.enabled}
+                    />
+                  </td>
                   <td className="border border-[#e8e8e8] px-3 py-2 text-[#333]">
                     {rule.triggerStatuses.map((status) => getStatusLabel(status)).join("；")}
                   </td>
@@ -79,10 +88,10 @@ export function AlertRuleList({
                       className={`inline-block px-2 py-0.5 rounded text-xs ${
                         rule.enabled
                           ? "bg-[#e6fffb] text-[#13c2c2] border border-[#87e8de]"
-                          : "bg-[#fff1f0] text-[#999] border border-[#ffa39e]"
+                          : "bg-[#f5f5f5] text-[#999] border border-[#d9d9d9]"
                       }`}
                     >
-                      {rule.enabled ? "正常发放" : "已作废"}
+                      {rule.enabled ? "使用中" : "已作废"}
                     </span>
                   </td>
                   <td className="border border-[#e8e8e8] px-3 py-2 text-[#333] max-w-[120px]">
@@ -104,30 +113,36 @@ export function AlertRuleList({
                   </td>
                   <td className="border border-[#e8e8e8] px-3 py-2 text-[#333]">{rule.updatedBy}</td>
                   <td className="border border-[#e8e8e8] px-3 py-2">
-                    <div className="flex items-center gap-1">
-                      <Switch
-                        checked={rule.enabled}
-                        onCheckedChange={() => onToggle(rule.id)}
-                        className="scale-75"
-                      />
-                      <button
-                        onClick={() => onEdit(rule)}
-                        className="text-[#1890ff] hover:text-[#40a9ff] px-1"
-                      >
-                        编辑
-                      </button>
-                      <button
-                        onClick={() => onEdit(rule)}
-                        className="text-[#1890ff] hover:text-[#40a9ff] px-1"
-                      >
-                        详情
-                      </button>
-                      <button
-                        onClick={() => setDeleteId(rule.id)}
-                        className="text-[#1890ff] hover:text-[#40a9ff] px-1"
-                      >
-                        作废
-                      </button>
+                    <div className="flex items-center gap-2">
+                      {rule.enabled ? (
+                        <>
+                          <button
+                            onClick={() => onEdit(rule)}
+                            className="text-[#1890ff] hover:text-[#40a9ff]"
+                          >
+                            编辑
+                          </button>
+                          <button
+                            onClick={() => onEdit(rule)}
+                            className="text-[#1890ff] hover:text-[#40a9ff]"
+                          >
+                            详情
+                          </button>
+                          <button
+                            onClick={() => setDeleteId(rule.id)}
+                            className="text-[#1890ff] hover:text-[#40a9ff]"
+                          >
+                            作废
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={() => onEdit(rule)}
+                          className="text-[#1890ff] hover:text-[#40a9ff]"
+                        >
+                          详情
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
