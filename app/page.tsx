@@ -1,118 +1,114 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Plus, Search, Bell } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { AlertRuleList } from "@/components/alert-rule-list";
-import { AlertRuleDialog } from "@/components/alert-rule-dialog";
-import { AlertRule, MOCK_RULES } from "@/lib/alert-data";
+import { useState } from "react"
+import { Plus, Search } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { AlertRuleList } from "@/components/alert-rule-list"
+import { AlertRuleDialog } from "@/components/alert-rule-dialog"
+import { type AlertRule, SAMPLE_RULES } from "@/lib/alert-data"
 
 export default function AlertRulesPage() {
-  const [rules, setRules] = useState<AlertRule[]>(MOCK_RULES);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingRule, setEditingRule] = useState<AlertRule | null>(null);
+  const [rules, setRules] = useState<AlertRule[]>(SAMPLE_RULES)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [editingRule, setEditingRule] = useState<AlertRule | null>(null)
 
   const filteredRules = rules.filter(
     (rule) =>
       rule.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       rule.shopIds.some((id) => id.includes(searchQuery))
-  );
+  )
 
   const handleCreateRule = () => {
-    setEditingRule(null);
-    setIsDialogOpen(true);
-  };
+    setEditingRule(null)
+    setIsDialogOpen(true)
+  }
 
   const handleEditRule = (rule: AlertRule) => {
-    setEditingRule(rule);
-    setIsDialogOpen(true);
-  };
+    setEditingRule(rule)
+    setIsDialogOpen(true)
+  }
 
   const handleDeleteRule = (ruleId: string) => {
-    setRules(rules.filter((r) => r.id !== ruleId));
-  };
+    setRules(rules.filter((r) => r.id !== ruleId))
+  }
 
   const handleToggleRule = (ruleId: string) => {
     setRules(
-      rules.map((r) =>
-        r.id === ruleId ? { ...r, enabled: !r.enabled } : r
-      )
-    );
-  };
+      rules.map((r) => (r.id === ruleId ? { ...r, enabled: !r.enabled } : r))
+    )
+  }
 
   const handleSaveRule = (rule: AlertRule) => {
     if (editingRule) {
-      setRules(rules.map((r) => (r.id === rule.id ? rule : r)));
+      setRules(rules.map((r) => (r.id === rule.id ? rule : r)))
     } else {
-      setRules([...rules, { ...rule, id: `rule_${Date.now()}` }]);
+      setRules([...rules, { ...rule, id: `${Date.now()}` }])
     }
-    setIsDialogOpen(false);
-    setEditingRule(null);
-  };
+    setIsDialogOpen(false)
+    setEditingRule(null)
+  }
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border">
-        <div className="mx-auto max-w-7xl px-6 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-chart-2/20">
-              <Bell className="h-5 w-5 text-chart-2" />
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold text-foreground">报警规则配置</h1>
-              <p className="text-sm text-muted-foreground">
-                配置订单异常报警规则，支持按店铺、状态设置不同的报警人员和提示语
-              </p>
-            </div>
+      <header className="border-b border-border bg-card">
+        <div className="flex h-12 items-center px-4">
+          <div className="flex items-center gap-2 text-primary font-medium">
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+            <span>报警中心</span>
           </div>
+          <nav className="ml-8 flex items-center gap-6 text-sm">
+            <span className="text-foreground">报警管理</span>
+            <span className="text-muted-foreground">系统设置</span>
+          </nav>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-6 py-8">
-        {/* Stats Cards */}
-        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-4">
-          <div className="rounded-lg border border-border bg-card p-4">
-            <div className="text-sm text-muted-foreground">全部规则</div>
-            <div className="mt-1 text-2xl font-semibold text-foreground">{rules.length}</div>
-          </div>
-          <div className="rounded-lg border border-border bg-card p-4">
-            <div className="text-sm text-muted-foreground">已启用</div>
-            <div className="mt-1 text-2xl font-semibold text-success">{rules.filter(r => r.enabled).length}</div>
-          </div>
-          <div className="rounded-lg border border-border bg-card p-4">
-            <div className="text-sm text-muted-foreground">已禁用</div>
-            <div className="mt-1 text-2xl font-semibold text-muted-foreground">{rules.filter(r => !r.enabled).length}</div>
-          </div>
-          <div className="rounded-lg border border-border bg-card p-4">
-            <div className="text-sm text-muted-foreground">关联店铺</div>
-            <div className="mt-1 text-2xl font-semibold text-foreground">
-              {new Set(rules.flatMap(r => r.shopIds)).size}
-            </div>
-          </div>
+      {/* Sub Header */}
+      <div className="border-b border-border bg-card px-4 py-2">
+        <div className="inline-flex items-center gap-1 rounded bg-primary px-3 py-1 text-sm text-primary-foreground">
+          <span className="h-1.5 w-1.5 rounded-full bg-primary-foreground" />
+          报警管理
+          <button className="ml-1 text-primary-foreground/70 hover:text-primary-foreground">
+            &times;
+          </button>
         </div>
+      </div>
 
-        {/* Toolbar */}
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative max-w-sm flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      {/* Main Content */}
+      <main className="p-4">
+        {/* Search Bar */}
+        <div className="mb-4 flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-foreground whitespace-nowrap">规则</span>
             <Input
-              placeholder="搜索规则名称或店铺ID..."
+              placeholder="请输入规则名称或店铺ID查询"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-card border-border"
+              className="w-64 h-8 text-sm"
             />
           </div>
-          <Button onClick={handleCreateRule} className="shrink-0">
-            <Plus className="mr-2 h-4 w-4" />
-            新建规则
-          </Button>
+          <div className="flex items-center gap-2 ml-auto">
+            <Button
+              size="sm"
+              className="h-8"
+              onClick={() => setSearchQuery(searchQuery)}
+            >
+              <Search className="mr-1 h-4 w-4" />
+              查询
+            </Button>
+            <Button size="sm" className="h-8" onClick={handleCreateRule}>
+              <Plus className="mr-1 h-4 w-4" />
+              新建规则
+            </Button>
+          </div>
         </div>
 
-        {/* Rules List */}
+        {/* Rules Table */}
         <AlertRuleList
           rules={filteredRules}
           onEdit={handleEditRule}
@@ -129,5 +125,5 @@ export default function AlertRulesPage() {
         />
       </main>
     </div>
-  );
+  )
 }
