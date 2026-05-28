@@ -155,18 +155,6 @@ export function AlertRuleDialog({
     triggerStatuses.length > 0 &&
     alertUserIds.length > 0
 
-  // 按角色分组用户
-  const usersByRole = SYSTEM_USERS.reduce(
-    (acc, user) => {
-      if (!acc[user.role]) {
-        acc[user.role] = []
-      }
-      acc[user.role].push(user)
-      return acc
-    },
-    {} as Record<string, typeof SYSTEM_USERS>
-  )
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg bg-white">
@@ -335,27 +323,23 @@ export function AlertRuleDialog({
                     <CommandInput placeholder="搜索人员..." className="text-sm" />
                     <CommandList className="max-h-[200px]">
                       <CommandEmpty>未找到匹配的人员</CommandEmpty>
-                      {Object.entries(usersByRole).map(([role, users]) => (
-                        <CommandGroup key={role} heading={role}>
-                          {users.map((user) => (
-                            <CommandItem
-                              key={user.id}
-                              value={user.name}
-                              onSelect={() => togglePerson(user.id)}
-                              className="text-sm"
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  alertUserIds.includes(user.id)
-                                    ? "opacity-100 text-[#1890ff]"
-                                    : "opacity-0"
-                                )}
-                              />
-                              {user.name}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
+                      {SYSTEM_USERS.map((user) => (
+                        <CommandItem
+                          key={user.id}
+                          value={user.name}
+                          onSelect={() => togglePerson(user.id)}
+                          className="text-sm"
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              alertUserIds.includes(user.id)
+                                ? "opacity-100 text-[#1890ff]"
+                                : "opacity-0"
+                            )}
+                          />
+                          {user.name}
+                        </CommandItem>
                       ))}
                     </CommandList>
                   </Command>

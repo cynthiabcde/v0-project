@@ -57,6 +57,7 @@ export interface AlertRule {
   alertUserIds: string[]
   alertMessage: string
   enabled: boolean
+  deprecated: boolean // 是否已作废
   createdAt: string
   createdBy: string
   updatedAt: string
@@ -73,6 +74,7 @@ export const SAMPLE_RULES: AlertRule[] = [
     alertUserIds: ['1', '3'],
     alertMessage: '商品或礼包未找到，请及时处理',
     enabled: true,
+    deprecated: false,
     createdAt: '2024-07-10 09:35:31',
     createdBy: '系统管理员11',
     updatedAt: '2024-07-10 09:35:31',
@@ -85,7 +87,8 @@ export const SAMPLE_RULES: AlertRule[] = [
     triggerStatuses: ['ORDER_TIMEOUT', 'ORDER_LONG_PROCESSING'],
     alertUserIds: ['2', '4'],
     alertMessage: '订单处理超时，请检查订单状态',
-    enabled: true,
+    enabled: false,
+    deprecated: false,
     createdAt: '2024-07-09 16:35:01',
     createdBy: '系统管理员11',
     updatedAt: '2024-07-09 16:35:01',
@@ -99,6 +102,7 @@ export const SAMPLE_RULES: AlertRule[] = [
     alertUserIds: ['1', '5'],
     alertMessage: '礼包库存不足，请及时补充',
     enabled: false,
+    deprecated: true,
     createdAt: '2024-07-08 14:22:07',
     createdBy: '余茶admin',
     updatedAt: '2024-07-08 14:22:07',

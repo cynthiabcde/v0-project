@@ -77,7 +77,7 @@ export function AlertRuleList({
                       checked={rule.enabled}
                       onCheckedChange={() => onToggle(rule.id)}
                       className="scale-75"
-                      disabled={!rule.enabled}
+                      disabled={rule.deprecated}
                     />
                   </td>
                   <td className="border border-[#e8e8e8] px-3 py-2 text-[#333]">
@@ -86,12 +86,14 @@ export function AlertRuleList({
                   <td className="border border-[#e8e8e8] px-3 py-2">
                     <span
                       className={`inline-block px-2 py-0.5 rounded text-xs ${
-                        rule.enabled
-                          ? "bg-[#e6fffb] text-[#13c2c2] border border-[#87e8de]"
-                          : "bg-[#f5f5f5] text-[#999] border border-[#d9d9d9]"
+                        rule.deprecated
+                          ? "bg-[#f5f5f5] text-[#999] border border-[#d9d9d9]"
+                          : rule.enabled
+                            ? "bg-[#e6fffb] text-[#13c2c2] border border-[#87e8de]"
+                            : "bg-[#fff7e6] text-[#fa8c16] border border-[#ffd591]"
                       }`}
                     >
-                      {rule.enabled ? "使用中" : "已作废"}
+                      {rule.deprecated ? "已作废" : rule.enabled ? "使用中" : "已暂停"}
                     </span>
                   </td>
                   <td className="border border-[#e8e8e8] px-3 py-2 text-[#333] max-w-[120px]">
@@ -114,7 +116,14 @@ export function AlertRuleList({
                   <td className="border border-[#e8e8e8] px-3 py-2 text-[#333]">{rule.updatedBy}</td>
                   <td className="border border-[#e8e8e8] px-3 py-2">
                     <div className="flex items-center gap-2">
-                      {rule.enabled ? (
+                      {rule.deprecated ? (
+                        <button
+                          onClick={() => onEdit(rule)}
+                          className="text-[#1890ff] hover:text-[#40a9ff]"
+                        >
+                          详情
+                        </button>
+                      ) : (
                         <>
                           <button
                             onClick={() => onEdit(rule)}
@@ -135,13 +144,6 @@ export function AlertRuleList({
                             作废
                           </button>
                         </>
-                      ) : (
-                        <button
-                          onClick={() => onEdit(rule)}
-                          className="text-[#1890ff] hover:text-[#40a9ff]"
-                        >
-                          详情
-                        </button>
                       )}
                     </div>
                   </td>

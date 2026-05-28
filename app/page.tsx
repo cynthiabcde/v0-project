@@ -35,7 +35,7 @@ export default function AlertRulesPage() {
   }
 
   const handleDeleteRule = (ruleId: string) => {
-    setRules(rules.filter((r) => r.id !== ruleId))
+    setRules(rules.map((r) => (r.id === ruleId ? { ...r, deprecated: true, enabled: false } : r)))
   }
 
   const handleToggleRule = (ruleId: string) => {
@@ -48,7 +48,7 @@ export default function AlertRulesPage() {
     if (editingRule) {
       setRules(rules.map((r) => (r.id === rule.id ? rule : r)))
     } else {
-      setRules([...rules, { ...rule, id: `${Date.now()}` }])
+      setRules([...rules, { ...rule, id: `${Date.now()}`, deprecated: false }])
     }
     setIsDialogOpen(false)
     setEditingRule(null)
@@ -108,7 +108,7 @@ export default function AlertRulesPage() {
               }`}
             >
               <Bell className="h-4 w-4" />
-              报警规则配置
+              报警管理
             </button>
           </nav>
         </aside>
@@ -119,7 +119,7 @@ export default function AlertRulesPage() {
           <div className="h-10 bg-white border-b border-[#e8e8e8] flex items-center px-2 shrink-0">
             <div className="inline-flex items-center gap-1 rounded bg-[#1890ff] px-3 py-1 text-sm text-white">
               <span className="h-1.5 w-1.5 rounded-full bg-white" />
-              {activeMenu === "alert" ? "报警规则配置" : "礼包管理"}
+              {activeMenu === "alert" ? "报警管理" : "礼包管理"}
               <button className="ml-1 text-white/70 hover:text-white">
                 <X className="h-3 w-3" />
               </button>
