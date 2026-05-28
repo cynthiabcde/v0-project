@@ -95,11 +95,7 @@ export default function AlertRulesPage() {
               <span className="text-[#999] cursor-pointer hover:text-[#1890ff]">系统设置</span>
             </nav>
           </div>
-          <div className="flex items-center gap-4 text-sm">
-            <span className="text-[#1890ff] cursor-pointer">英语</span>
-            <span className="text-[#333]">中文（简体）</span>
-            <span className="text-[#999]">:</span>
-            <span className="text-[#999]">x</span>
+          <div className="flex items-center gap-2 text-sm">
             <span className="text-[#333]">系统管理员11</span>
             <div className="w-8 h-8 bg-[#87d068] rounded-full flex items-center justify-center text-white text-xs">
               管
