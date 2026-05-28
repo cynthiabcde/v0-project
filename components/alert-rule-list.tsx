@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreHorizontal, Pencil, Trash2, Store, Users, MessageSquare } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, Store, Users, MessageSquare, Clock, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -40,6 +40,20 @@ export function AlertRuleList({ rules, onEdit, onDelete, onToggle }: AlertRuleLi
     }
   };
 
+  // 解析多个告警类型ID
+  const getAlertTypeNames = (alertTypeId: string) => {
+    const ids = alertTypeId.split(",");
+    return ids.map(id => {
+      const type = getAlertTypeById(id.trim());
+      return type?.name || id.trim();
+    });
+  };
+
+  // 解析多个类别
+  const getCategories = (category: string) => {
+    return [...new Set(category.split(",").map(c => c.trim()))];
+  };
+
   if (rules.length === 0) {
     return (
       <div className="rounded-lg border border-border bg-card p-12 text-center">
@@ -56,7 +70,8 @@ export function AlertRuleList({ rules, onEdit, onDelete, onToggle }: AlertRuleLi
     <>
       <div className="space-y-3">
         {rules.map((rule) => {
-          const alertType = getAlertTypeById(rule.alertTypeId);
+          const alertTypeNames = getAlertTypeNames(rule.alertTypeId);
+          const categories = getCategories(rule.alertTypeCategory);
           const personNames = getUserNamesByIds(rule.alertPersonIds);
 
           return (
@@ -67,28 +82,70 @@ export function AlertRuleList({ rules, onEdit, onDelete, onToggle }: AlertRuleLi
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 space-y-3">
                   {/* Header */}
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 flex-wrap">
                     <div className="flex items-center gap-2">
                       <span className={`h-2 w-2 rounded-full ${rule.enabled ? "bg-success" : "bg-muted-foreground"}`} />
                       <h3 className="font-medium text-foreground">{rule.name}</h3>
                     </div>
-                    <Badge variant="outline" className="text-xs font-normal">
-                      {rule.alertTypeCategory}
+                    {categories.map((cat, idx) => (
+                      <Badge key={idx} variant="outline" className="text-xs font-normal">
+                        {cat}
+                      </Badge>
+                    ))}
+                    {/* 告警频率标签 */}
+                    <Badge 
+                      variant={rule.frequencyType === "polling" ? "default" : "secondary"} 
+                      className="text-xs gap-1"
+                    >
+                      {rule.frequencyType === "polling" ? (
+                        <>
+                          <Clock className="h-3 w-3" />
+                          轮询告警
+                        </>
+                      ) : (
+                        <>
+                          <Zap className="h-3 w-3" />
+                          即时告警
+                        </>
+                      )}
                     </Badge>
                   </div>
 
-                  {/* Alert Type */}
-                  <div className="text-sm text-muted-foreground">
-                    <span className="text-foreground/80">触发状态：</span>
-                    {alertType?.name || rule.alertTypeId}
+                  {/* Alert Types - 支持多个 */}
+                  <div className="text-sm">
+                    <span className="text-muted-foreground">触发状态：</span>
+                    <div className="inline-flex flex-wrap gap-1.5 ml-1">
+                      {alertTypeNames.map((name, idx) => (
+                        <Badge key={idx} variant="secondary" className="text-xs font-normal">
+                          {name}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
+
+                  {/* Polling Config */}
+                  {rule.frequencyType === "polling" && rule.pollingConfig && (
+                    <div className="text-sm text-muted-foreground bg-accent/20 rounded-md px-3 py-2">
+                      <span className="text-foreground/80">轮询配置：</span>
+                      超过 {rule.pollingConfig.startHours} 小时开始告警，每 {rule.pollingConfig.intervalHours} 小时重复
+                      {rule.pollingConfig.stopConditions.length > 0 && (
+                        <span>，状态变为【{rule.pollingConfig.stopConditions.join("、")}】时停止</span>
+                      )}
+                    </div>
+                  )}
 
                   {/* Meta Info */}
                   <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1.5">
                       <Store className="h-4 w-4" />
                       <span>店铺：</span>
-                      <span className="text-foreground/80">{rule.shopIds.join(", ")}</span>
+                      <div className="flex flex-wrap gap-1">
+                        {rule.shopIds.map((id, idx) => (
+                          <Badge key={idx} variant="outline" className="text-xs font-normal">
+                            {id}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Users className="h-4 w-4" />
