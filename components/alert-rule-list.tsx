@@ -1,15 +1,7 @@
 "use client"
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { useState } from "react"
 import { Switch } from "@/components/ui/switch"
-import { Badge } from "@/components/ui/badge"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,7 +12,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { useState } from "react"
 import {
   type AlertRule,
   getStatusLabel,
@@ -51,83 +42,69 @@ export function AlertRuleList({
 
   return (
     <>
-      <div className="rounded border border-border bg-card overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-muted/50 hover:bg-muted/50">
-              <TableHead className="w-20 text-foreground font-medium text-sm">规则ID</TableHead>
-              <TableHead className="text-foreground font-medium text-sm">规则名称</TableHead>
-              <TableHead className="text-foreground font-medium text-sm">触发状态</TableHead>
-              <TableHead className="text-foreground font-medium text-sm">店铺ID</TableHead>
-              <TableHead className="text-foreground font-medium text-sm">报警人员</TableHead>
-              <TableHead className="text-foreground font-medium text-sm">提示语</TableHead>
-              <TableHead className="w-24 text-foreground font-medium text-sm">状态</TableHead>
-              <TableHead className="text-foreground font-medium text-sm">新建人</TableHead>
-              <TableHead className="text-foreground font-medium text-sm">新建时间</TableHead>
-              <TableHead className="text-foreground font-medium text-sm">修改人</TableHead>
-              <TableHead className="w-32 text-foreground font-medium text-sm">操作</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+      <div className="bg-white border border-[#e8e8e8] rounded overflow-hidden">
+        <table className="w-full border-collapse text-sm">
+          <thead>
+            <tr className="bg-[#fafafa]">
+              <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">规则ID</th>
+              <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">规则名称</th>
+              <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">触发状态</th>
+              <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">状态</th>
+              <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">店铺ID</th>
+              <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">报警人员</th>
+              <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">提示语</th>
+              <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">新建人</th>
+              <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">新建时间</th>
+              <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">修改人</th>
+              <th className="border border-[#e8e8e8] px-3 py-2 text-left font-medium text-[#333]">操作</th>
+            </tr>
+          </thead>
+          <tbody>
             {rules.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={11} className="h-24 text-center text-muted-foreground">
+              <tr>
+                <td colSpan={11} className="border border-[#e8e8e8] px-3 py-8 text-center text-[#999]">
                   暂无数据
-                </TableCell>
-              </TableRow>
+                </td>
+              </tr>
             ) : (
               rules.map((rule) => (
-                <TableRow key={rule.id} className="hover:bg-muted/30">
-                  <TableCell className="text-sm">{rule.id}</TableCell>
-                  <TableCell className="text-sm font-medium">{rule.name}</TableCell>
-                  <TableCell>
-                    <div className="flex flex-wrap gap-1">
-                      {rule.triggerStatuses.slice(0, 2).map((status) => (
-                        <Badge
-                          key={status}
-                          variant="secondary"
-                          className="text-xs font-normal"
-                        >
-                          {getStatusLabel(status)}
-                        </Badge>
-                      ))}
-                      {rule.triggerStatuses.length > 2 && (
-                        <Badge variant="outline" className="text-xs font-normal">
-                          +{rule.triggerStatuses.length - 2}
-                        </Badge>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground max-w-32">
-                    <span className="line-clamp-2">{rule.shopIds.join("; ")}</span>
-                  </TableCell>
-                  <TableCell className="text-sm">
-                    {rule.alertUserIds.map((id) => getUserName(id)).join(", ")}
-                  </TableCell>
-                  <TableCell className="max-w-40">
-                    <p className="truncate text-sm text-muted-foreground" title={rule.alertMessage}>
-                      {rule.alertMessage}
-                    </p>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={rule.enabled ? "default" : "outline"}
-                      className={
+                <tr key={rule.id} className="hover:bg-[#fafafa]">
+                  <td className="border border-[#e8e8e8] px-3 py-2 text-[#333]">{rule.id}</td>
+                  <td className="border border-[#e8e8e8] px-3 py-2 text-[#333]">{rule.name}</td>
+                  <td className="border border-[#e8e8e8] px-3 py-2 text-[#333]">
+                    {rule.triggerStatuses.map((status) => getStatusLabel(status)).join("；")}
+                  </td>
+                  <td className="border border-[#e8e8e8] px-3 py-2">
+                    <span
+                      className={`inline-block px-2 py-0.5 rounded text-xs ${
                         rule.enabled
-                          ? "bg-green-50 text-green-600 hover:bg-green-50 border-green-200"
-                          : "text-muted-foreground"
-                      }
+                          ? "bg-[#e6fffb] text-[#13c2c2] border border-[#87e8de]"
+                          : "bg-[#fff1f0] text-[#999] border border-[#ffa39e]"
+                      }`}
                     >
                       {rule.enabled ? "正常发放" : "已作废"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-sm">{rule.createdBy}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                    </span>
+                  </td>
+                  <td className="border border-[#e8e8e8] px-3 py-2 text-[#333] max-w-[120px]">
+                    <span className="block truncate" title={rule.shopIds.join("；")}>
+                      {rule.shopIds.join("；")}
+                    </span>
+                  </td>
+                  <td className="border border-[#e8e8e8] px-3 py-2 text-[#333]">
+                    {rule.alertUserIds.map((id) => getUserName(id)).join("；")}
+                  </td>
+                  <td className="border border-[#e8e8e8] px-3 py-2 text-[#333] max-w-[150px]">
+                    <span className="block truncate" title={rule.alertMessage}>
+                      {rule.alertMessage}
+                    </span>
+                  </td>
+                  <td className="border border-[#e8e8e8] px-3 py-2 text-[#333]">{rule.createdBy}</td>
+                  <td className="border border-[#e8e8e8] px-3 py-2 text-[#333] whitespace-nowrap">
                     {rule.createdAt}
-                  </TableCell>
-                  <TableCell className="text-sm">{rule.updatedBy}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
+                  </td>
+                  <td className="border border-[#e8e8e8] px-3 py-2 text-[#333]">{rule.updatedBy}</td>
+                  <td className="border border-[#e8e8e8] px-3 py-2">
+                    <div className="flex items-center gap-1">
                       <Switch
                         checked={rule.enabled}
                         onCheckedChange={() => onToggle(rule.id)}
@@ -135,45 +112,51 @@ export function AlertRuleList({
                       />
                       <button
                         onClick={() => onEdit(rule)}
-                        className="text-sm text-primary hover:underline"
+                        className="text-[#1890ff] hover:text-[#40a9ff] px-1"
                       >
                         编辑
                       </button>
                       <button
                         onClick={() => onEdit(rule)}
-                        className="text-sm text-primary hover:underline"
+                        className="text-[#1890ff] hover:text-[#40a9ff] px-1"
                       >
                         详情
                       </button>
                       <button
                         onClick={() => setDeleteId(rule.id)}
-                        className="text-sm text-primary hover:underline"
+                        className="text-[#1890ff] hover:text-[#40a9ff] px-1"
                       >
                         作废
                       </button>
                     </div>
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               ))
             )}
-          </TableBody>
-        </Table>
+          </tbody>
+        </table>
       </div>
 
       {/* Pagination */}
       <div className="mt-4 flex items-center justify-between text-sm">
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <span>20条/页</span>
+        <div className="flex items-center gap-2 text-[#666]">
+          <select className="h-7 px-2 border border-[#d9d9d9] rounded bg-white text-sm">
+            <option>20条/页</option>
+            <option>50条/页</option>
+            <option>100条/页</option>
+          </select>
         </div>
         <div className="flex items-center gap-1">
-          <button className="px-2 py-1 text-muted-foreground hover:text-foreground">
+          <button className="w-7 h-7 flex items-center justify-center border border-[#d9d9d9] rounded text-[#666] hover:border-[#1890ff] hover:text-[#1890ff]">
             &lt;
           </button>
-          <button className="px-3 py-1 rounded bg-primary text-primary-foreground">
+          <button className="w-7 h-7 flex items-center justify-center border border-[#1890ff] rounded bg-[#1890ff] text-white">
             1
           </button>
-          <button className="px-3 py-1 rounded hover:bg-muted">2</button>
-          <button className="px-2 py-1 text-muted-foreground hover:text-foreground">
+          <button className="w-7 h-7 flex items-center justify-center border border-[#d9d9d9] rounded text-[#666] hover:border-[#1890ff] hover:text-[#1890ff]">
+            2
+          </button>
+          <button className="w-7 h-7 flex items-center justify-center border border-[#d9d9d9] rounded text-[#666] hover:border-[#1890ff] hover:text-[#1890ff]">
             &gt;
           </button>
         </div>

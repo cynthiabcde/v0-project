@@ -169,239 +169,254 @@ export function AlertRuleDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle>{rule ? "编辑报警规则" : "新建报警规则"}</DialogTitle>
+      <DialogContent className="max-w-lg bg-white">
+        <DialogHeader className="border-b border-[#e8e8e8] pb-4">
+          <DialogTitle className="text-[#333] text-base font-medium">
+            {rule ? "编辑报警规则" : "新建报警规则"}
+          </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           {/* 规则名称 */}
-          <div className="space-y-2">
-            <Label htmlFor="rule-name">
-              规则名称 <span className="text-destructive">*</span>
+          <div className="flex items-center gap-4">
+            <Label htmlFor="rule-name" className="w-20 text-right text-sm text-[#333] shrink-0">
+              规则名称 <span className="text-[#ff4d4f]">*</span>
             </Label>
             <Input
               id="rule-name"
               placeholder="请输入规则名称"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              className="flex-1 h-8 text-sm border-[#d9d9d9] rounded"
             />
           </div>
 
           {/* 店铺ID */}
-          <div className="space-y-2">
-            <Label>
-              店铺ID <span className="text-destructive">*</span>
-              <span className="text-muted-foreground text-xs ml-2">
-                （支持多选）
-              </span>
+          <div className="flex items-start gap-4">
+            <Label className="w-20 text-right text-sm text-[#333] shrink-0 pt-1">
+              店铺ID <span className="text-[#ff4d4f]">*</span>
             </Label>
-            <div className="flex gap-2">
-              <Input
-                placeholder="输入店铺ID后按回车添加"
-                value={shopIdInput}
-                onChange={(e) => setShopIdInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="flex-1"
-              />
-              <Button type="button" variant="outline" onClick={handleAddShopId}>
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-            {shopIds.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {shopIds.map((id) => (
-                  <Badge key={id} variant="secondary" className="gap-1 pr-1">
-                    {id}
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveShopId(id)}
-                      className="ml-1 rounded-full hover:bg-muted-foreground/20 p-0.5"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* 触发状态 */}
-          <div className="space-y-2">
-            <Label>
-              触发状态 <span className="text-destructive">*</span>
-              <span className="text-muted-foreground text-xs ml-2">
-                （支持多选）
-              </span>
-            </Label>
-            <Popover open={statusOpen} onOpenChange={setStatusOpen}>
-              <PopoverTrigger asChild>
+            <div className="flex-1 space-y-2">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="输入店铺ID后按回车添加"
+                  value={shopIdInput}
+                  onChange={(e) => setShopIdInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="flex-1 h-8 text-sm border-[#d9d9d9] rounded"
+                />
                 <Button
+                  type="button"
                   variant="outline"
-                  role="combobox"
-                  aria-expanded={statusOpen}
-                  className="w-full justify-between font-normal"
+                  size="sm"
+                  onClick={handleAddShopId}
+                  className="h-8 px-3 border-[#d9d9d9]"
                 >
-                  {triggerStatuses.length > 0 ? (
-                    <span className="truncate">
-                      已选择 {triggerStatuses.length} 个状态
-                    </span>
-                  ) : (
-                    <span className="text-muted-foreground">
-                      请选择触发状态...
-                    </span>
-                  )}
-                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  <Plus className="h-4 w-4" />
                 </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[400px] p-0" align="start">
-                <Command>
-                  <CommandInput placeholder="搜索状态..." />
-                  <CommandList className="max-h-[250px]">
-                    <CommandEmpty>未找到匹配的状态</CommandEmpty>
-                    {ALERT_STATUS_CATEGORIES.map((category) => (
-                      <CommandGroup key={category.category} heading={category.category}>
-                        {category.statuses.map((status) => (
-                          <CommandItem
-                            key={status.id}
-                            value={status.label}
-                            onSelect={() => toggleStatus(status.id)}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                triggerStatuses.includes(status.id)
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                            {status.label}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    ))}
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-            {triggerStatuses.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {triggerStatuses.map((statusId) => (
-                  <Badge key={statusId} variant="secondary" className="gap-1 pr-1">
-                    {getStatusLabel(statusId)}
-                    <button
-                      type="button"
-                      onClick={() => toggleStatus(statusId)}
-                      className="ml-1 rounded-full hover:bg-muted-foreground/20 p-0.5"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </Badge>
-                ))}
               </div>
-            )}
-          </div>
-
-          {/* 报警人员 */}
-          <div className="space-y-2">
-            <Label>
-              报警人员 <span className="text-destructive">*</span>
-              <span className="text-muted-foreground text-xs ml-2">
-                （支持多选）
-              </span>
-            </Label>
-            <Popover open={personOpen} onOpenChange={setPersonOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={personOpen}
-                  className="w-full justify-between font-normal"
-                >
-                  {alertUserIds.length > 0 ? (
-                    <span className="truncate">
-                      已选择 {alertUserIds.length} 人
-                    </span>
-                  ) : (
-                    <span className="text-muted-foreground">
-                      请选择报警人员...
-                    </span>
-                  )}
-                  <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[300px] p-0" align="start">
-                <Command>
-                  <CommandInput placeholder="搜索人员..." />
-                  <CommandList className="max-h-[250px]">
-                    <CommandEmpty>未找到匹配的人员</CommandEmpty>
-                    {Object.entries(usersByRole).map(([role, users]) => (
-                      <CommandGroup key={role} heading={role}>
-                        {users.map((user) => (
-                          <CommandItem
-                            key={user.id}
-                            value={user.name}
-                            onSelect={() => togglePerson(user.id)}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                alertUserIds.includes(user.id)
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
-                            {user.name}
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    ))}
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-            {alertUserIds.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {alertUserIds.map((userId) => {
-                  const user = SYSTEM_USERS.find((u) => u.id === userId)
-                  return (
-                    <Badge key={userId} variant="secondary" className="gap-1 pr-1">
-                      {user?.name || userId}
+              {shopIds.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {shopIds.map((id) => (
+                    <span
+                      key={id}
+                      className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#fafafa] border border-[#d9d9d9] rounded text-xs text-[#333]"
+                    >
+                      {id}
                       <button
                         type="button"
-                        onClick={() => togglePerson(userId)}
-                        className="ml-1 rounded-full hover:bg-muted-foreground/20 p-0.5"
+                        onClick={() => handleRemoveShopId(id)}
+                        className="text-[#999] hover:text-[#333]"
                       >
                         <X className="h-3 w-3" />
                       </button>
-                    </Badge>
-                  )
-                })}
-              </div>
-            )}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 触发状态 */}
+          <div className="flex items-start gap-4">
+            <Label className="w-20 text-right text-sm text-[#333] shrink-0 pt-1">
+              触发状态 <span className="text-[#ff4d4f]">*</span>
+            </Label>
+            <div className="flex-1 space-y-2">
+              <Popover open={statusOpen} onOpenChange={setStatusOpen}>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className="w-full h-8 px-3 border border-[#d9d9d9] rounded bg-white text-sm text-left flex items-center justify-between"
+                  >
+                    {triggerStatuses.length > 0 ? (
+                      <span className="text-[#333]">已选择 {triggerStatuses.length} 个状态</span>
+                    ) : (
+                      <span className="text-[#999]">请选择触发状态...</span>
+                    )}
+                    <ChevronDown className="h-4 w-4 text-[#999]" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[350px] p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="搜索状态..." className="text-sm" />
+                    <CommandList className="max-h-[200px]">
+                      <CommandEmpty>未找到匹配的状态</CommandEmpty>
+                      {ALERT_STATUS_CATEGORIES.map((category) => (
+                        <CommandGroup key={category.category} heading={category.category}>
+                          {category.statuses.map((status) => (
+                            <CommandItem
+                              key={status.id}
+                              value={status.label}
+                              onSelect={() => toggleStatus(status.id)}
+                              className="text-sm"
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  triggerStatuses.includes(status.id)
+                                    ? "opacity-100 text-[#1890ff]"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {status.label}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      ))}
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              {triggerStatuses.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {triggerStatuses.map((statusId) => (
+                    <span
+                      key={statusId}
+                      className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#e6f7ff] border border-[#91d5ff] rounded text-xs text-[#1890ff]"
+                    >
+                      {getStatusLabel(statusId)}
+                      <button
+                        type="button"
+                        onClick={() => toggleStatus(statusId)}
+                        className="text-[#1890ff] hover:text-[#096dd9]"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 报警人员 */}
+          <div className="flex items-start gap-4">
+            <Label className="w-20 text-right text-sm text-[#333] shrink-0 pt-1">
+              报警人员 <span className="text-[#ff4d4f]">*</span>
+            </Label>
+            <div className="flex-1 space-y-2">
+              <Popover open={personOpen} onOpenChange={setPersonOpen}>
+                <PopoverTrigger asChild>
+                  <button
+                    type="button"
+                    className="w-full h-8 px-3 border border-[#d9d9d9] rounded bg-white text-sm text-left flex items-center justify-between"
+                  >
+                    {alertUserIds.length > 0 ? (
+                      <span className="text-[#333]">已选择 {alertUserIds.length} 人</span>
+                    ) : (
+                      <span className="text-[#999]">请选择报警人员...</span>
+                    )}
+                    <ChevronDown className="h-4 w-4 text-[#999]" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[280px] p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="搜索人员..." className="text-sm" />
+                    <CommandList className="max-h-[200px]">
+                      <CommandEmpty>未找到匹配的人员</CommandEmpty>
+                      {Object.entries(usersByRole).map(([role, users]) => (
+                        <CommandGroup key={role} heading={role}>
+                          {users.map((user) => (
+                            <CommandItem
+                              key={user.id}
+                              value={user.name}
+                              onSelect={() => togglePerson(user.id)}
+                              className="text-sm"
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  alertUserIds.includes(user.id)
+                                    ? "opacity-100 text-[#1890ff]"
+                                    : "opacity-0"
+                                )}
+                              />
+                              {user.name}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      ))}
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+              {alertUserIds.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {alertUserIds.map((userId) => {
+                    const user = SYSTEM_USERS.find((u) => u.id === userId)
+                    return (
+                      <span
+                        key={userId}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#fafafa] border border-[#d9d9d9] rounded text-xs text-[#333]"
+                      >
+                        {user?.name || userId}
+                        <button
+                          type="button"
+                          onClick={() => togglePerson(userId)}
+                          className="text-[#999] hover:text-[#333]"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </span>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* 报警提示语 */}
-          <div className="space-y-2">
-            <Label htmlFor="alert-message">报警提示语</Label>
-            <Textarea
-              id="alert-message"
-              placeholder="自定义报警提示语（可选）"
-              value={alertMessage}
-              onChange={(e) => setAlertMessage(e.target.value)}
-              rows={3}
-            />
-            <p className="text-xs text-muted-foreground">
-              留空将自动生成默认提示语
-            </p>
+          <div className="flex items-start gap-4">
+            <Label htmlFor="alert-message" className="w-20 text-right text-sm text-[#333] shrink-0 pt-1">
+              报警提示语
+            </Label>
+            <div className="flex-1">
+              <Textarea
+                id="alert-message"
+                placeholder="自定义报警提示语（可选，留空将自动生成）"
+                value={alertMessage}
+                onChange={(e) => setAlertMessage(e.target.value)}
+                rows={3}
+                className="text-sm border-[#d9d9d9] rounded resize-none"
+              />
+            </div>
           </div>
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+        <DialogFooter className="border-t border-[#e8e8e8] pt-4">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            className="h-8 px-4 border-[#d9d9d9] text-[#333] hover:border-[#1890ff] hover:text-[#1890ff]"
+          >
             取消
           </Button>
-          <Button onClick={handleSave} disabled={!isValid}>
+          <Button
+            onClick={handleSave}
+            disabled={!isValid}
+            className="h-8 px-4 bg-[#1890ff] hover:bg-[#40a9ff] text-white"
+          >
             {rule ? "保存" : "创建"}
           </Button>
         </DialogFooter>
